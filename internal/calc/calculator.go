@@ -31,15 +31,17 @@ func Calculate(input string) (string, error) {
 
 	switch operator {
 	case "+":
-		return str1 + str2, nil
+		return limitString(str1 + str2), nil
 	case "-":
-		return strings.ReplaceAll(str1, str2, ""), nil
+		return limitString(str1 + str2), nil
 	case "*":
 		n, err := strconv.Atoi(str2)
 		if err != nil || n < 0 {
 			return "", errors.New("второй операнд должен быть положительным целым числом для операции '*'")
 		}
-		return strings.Repeat(str1, n), nil
+		result := strings.Repeat(str1, n)
+		return limitString(result), nil
+	
 	case "/":
 		n, err := strconv.Atoi(str2)
 		if err != nil || n < 0 {
@@ -48,8 +50,16 @@ func Calculate(input string) (string, error) {
 		if n > len(str1) {
 			n = len(str1)
 		}
-		return str1[:n], nil
+		result := str1[:n]
+		return limitString(result), nil
 	default:
 		return "", errors.New("неподдерживаемый оператор: " + operator)
 	}
+}
+
+func limitString(str string) string {
+    if len(str) > 40 {
+        return str[:40] + "..."
+    }
+    return str
 }
