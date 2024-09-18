@@ -6,18 +6,28 @@ import (
 	"strings"
 )
 
-// Calculate выполняет операции со строками.
 func Calculate(input string) (string, error) {
-	// Разбиваем строку на операнды и оператор
-	tokens := strings.Fields(input)
-	if len(tokens) != 3 {
-		return "", errors.New("неверный формат ввода, ожидается: 'строка оператор строка или число'")
+	operators := []string{"+", "-", "*", "/"}
+
+	var operator string
+	var pos int
+	for _, op := range operators {
+		pos = strings.Index(input, " "+op+" ")
+		if pos != -1 {
+			operator = op
+			break
+		}
 	}
 
-	// Операнды
-	str1 := tokens[0]
-	operator := tokens[1]
-	str2 := tokens[2]
+	if operator == "" {
+		return "", errors.New("неверный формат ввода, оператор не найден")
+	}
+
+	str1 := input[:pos]
+	str2 := input[pos+len(operator)+2:] 
+
+	str1 = strings.TrimSpace(str1)
+	str2 = strings.TrimSpace(str2)
 
 	switch operator {
 	case "+":
@@ -36,7 +46,7 @@ func Calculate(input string) (string, error) {
 			return "", errors.New("второй операнд должен быть положительным целым числом для операции '/'")
 		}
 		if n > len(str1) {
-			n = len(str1) // Чтобы избежать выхода за пределы строки
+			n = len(str1)
 		}
 		return str1[:n], nil
 	default:
