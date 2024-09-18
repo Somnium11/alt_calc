@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func Calculate(input string) (string, error) {
+func Calculate(input string) string {
 	operators := []string{"+", "-", "*", "/"}
 
 	var operator string
@@ -41,40 +41,47 @@ func Calculate(input string) (string, error) {
 		}
 		str2 = str2[1 : len(str2)-1]
 		result := str1 + str2
-		return limitString(result), nil
+		return LimitString(result)
 	case "-":
 		if !(strings.HasPrefix(str2, "\"") && strings.HasSuffix(str2, "\"")) {
 			panic("второй операнд для вычитания должен быть строкой в кавычках")
 		}
 		str2 = str2[1 : len(str2)-1]
 		result := strings.ReplaceAll(str1, str2, "")
-		return limitString(result), nil
+		return LimitString(result)
 	case "*":
 		n, err := strconv.Atoi(str2)
-		if err != nil || n < 1 {
+		if err != nil {
 			panic("второй операнд должен быть положительным целым числом для операции '*'")
 		}
+		ValidateNumberInRange(n)
 		result := strings.Repeat(str1, n)
-		return limitString(result), nil
+		return LimitString(result)
 	case "/":
 		n, err := strconv.Atoi(str2)
-		if err != nil || n < 1 {
+		if err != nil {
 			panic("второй операнд должен быть положительным целым числом для операции '/'")
 		}
+		ValidateNumberInRange(n)
 		if n > len(str1) {
 			n = len(str1)
 		}
 		result := str1[:n]
-		return limitString(result), nil
+		return LimitString(result)
 	default:
-		// Если оператор не поддерживается, возвращаем ошибку
 		panic("неподдерживаемый оператор: " + operator)
 	}
 }
 
-func limitString(str string) string {
+func LimitString(str string) string {
 	if len(str) > 40 {
 		return str[:40] + "..."
 	}
 	return str
+}
+
+func ValidateNumberInRange(n int) {
+	if n < 1 || n > 10 {
+		panic("число должно быть в диапазоне от 1 до 10 включительно")
+	}
 }
