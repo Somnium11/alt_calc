@@ -36,6 +36,7 @@ func Calculate(input string) string {
 
 	switch operator {
 	case "+":
+		ValidateStringLength(str1)
 		if !(strings.HasPrefix(str2, "\"") && strings.HasSuffix(str2, "\"")) {
 			panic("второй операнд для сложения должен быть строкой в кавычках")
 		}
@@ -43,6 +44,7 @@ func Calculate(input string) string {
 		result := str1 + str2
 		return LimitString(result)
 	case "-":
+		ValidateStringLength(str1)
 		if !(strings.HasPrefix(str2, "\"") && strings.HasSuffix(str2, "\"")) {
 			panic("второй операнд для вычитания должен быть строкой в кавычках")
 		}
@@ -54,6 +56,7 @@ func Calculate(input string) string {
 		if err != nil {
 			panic("второй операнд должен быть положительным целым числом для операции '*'")
 		}
+		ValidateStringLength(str1)
 		ValidateNumberInRange(n)
 		result := strings.Repeat(str1, n)
 		return LimitString(result)
@@ -62,6 +65,7 @@ func Calculate(input string) string {
 		if err != nil {
 			panic("второй операнд должен быть положительным целым числом для операции '/'")
 		}
+		ValidateStringLength(str1)
 		ValidateNumberInRange(n)
 		if n > len(str1) {
 			n = len(str1)
@@ -83,5 +87,11 @@ func LimitString(str string) string {
 func ValidateNumberInRange(n int) {
 	if n < 1 || n > 10 {
 		panic("число должно быть в диапазоне от 1 до 10 включительно")
+	}
+}
+
+func ValidateStringLength(str string) {
+	if len(str) > 10 {
+		panic("длина строки должна быть не более 10 символов")
 	}
 }
